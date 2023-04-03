@@ -1,5 +1,6 @@
 const API_Key = '8c8e1a50-6322-4135-8875-5d40a5420d86';
 const API_url_popular = 'https://kinopoiskapiunofficial.tech/api/v2.2/films/top?type=TOP_100_POPULAR_FILMS&page=1';
+const API_url_search ='https://kinopoiskapiunofficial.tech/api/v2.1/films/search-by-keyword?keyword=';
 
 getMovies(API_url_popular);
 
@@ -28,6 +29,9 @@ async function  getMovies(url) {
 }
 
 function showMovies(data) {
+
+  document.querySelector('.movies').innerHTML = '';
+
   const moviesEl = document.querySelector('.movies');
   data.films.forEach(movie => {
     const movieEl = document.createElement('div');
@@ -41,7 +45,11 @@ function showMovies(data) {
     <div class="movie__info">
       <div class="movie__title">${movie.nameRu}</div>
       <div class="movie__category">${movie.genres.map((genre)=> ` ${genre.genre}`)}</div>
-      <div class="movie__average movie__average--${getClassByRate(movie.rating)}">${movie.rating}</div>
+      ${
+        movie.rating !== "null" &&
+      `
+      <div class="movie__average movie__average--${getClassByRate(movie.rating)}">${movie.rating}</div>`
+      }
     </div>
   </div>
     `
@@ -49,32 +57,18 @@ function showMovies(data) {
   });
 }
 
-// "films": [
-//   {
-//     "filmId": 1267348,
-//     "nameRu": "Джон Уик 4",
-//     "nameEn": "John Wick: Chapter 4",
-//     "year": "2023",
-//     "filmLength": "02:49",
-//     "countries": [
-//       {
-//         "country": "США"
-//       }
-//     ],
-//     "genres": [
-//       {
-//         "genre": "триллер"
-//       },
-//       {
-//         "genre": "криминал"
-//       },
-//       {
-//         "genre": "боевик"
-//       }
-//     ],
-//     "rating": "7.9",
-//     "ratingVoteCount": 25574,
-//     "posterUrl": "https://kinopoiskapiunofficial.tech/images/posters/kp/1267348.jpg",
-//     "posterUrlPreview": "https://kinopoiskapiunofficial.tech/images/posters/kp_small/1267348.jpg",
-//     "ratingChange": null
-//   },
+//Поиск
+
+const form = document.querySelector('form');
+const search = document.querySelector('.header__search');
+
+form.addEventListener('submit', (e)=> {
+  e.preventDefault();
+
+  const apiSearcUrl = `${API_url_search}${search.value}`;
+  if(search.value) {
+    getMovies(apiSearcUrl);
+
+    search.value = '';
+  }
+});
