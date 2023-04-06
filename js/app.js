@@ -72,3 +72,25 @@ form.addEventListener('submit', (e)=> {
     search.value = '';
   }
 });
+
+//Modal
+const modalElement = document.querySelector('.modal');
+
+
+modalEl.innerHTML = `
+    <div class="modal__card">
+      <img class="modal__movie-backdrop" src="${respData.posterUrl}" alt="">
+      <h2>
+        <span class="modal__movie-title">${respData.nameRu}</span>
+        <span class="modal__movie-release-year"> - ${respData.year}</span>
+      </h2>
+      <ul class="modal__movie-info">
+        <div class="loader"></div>
+        <li class="modal__movie-genre">Жанр - ${respData.genres.map((el) => `<span>${el.genre}</span>`)}</li>
+        ${respData.filmLength ? `<li class="modal__movie-runtime">Время - ${respData.filmLength} минут</li>` : ''}
+        <li >Сайт: <a class="modal__movie-site" href="${respData.webUrl}">${respData.webUrl}</a></li>
+        <li class="modal__movie-overview">Описание - ${respData.description}</li>
+      </ul>
+      <button type="button" class="modal__button-close">Закрыть</button>
+    </div>
+    `;
