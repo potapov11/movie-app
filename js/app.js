@@ -1,6 +1,7 @@
 const API_Key = '8c8e1a50-6322-4135-8875-5d40a5420d86';
 const API_url_popular = 'https://kinopoiskapiunofficial.tech/api/v2.2/films/top?type=TOP_100_POPULAR_FILMS&page=1';
 const API_url_search ='https://kinopoiskapiunofficial.tech/api/v2.1/films/search-by-keyword?keyword=';
+const API_Movie_details = 'https://kinopoiskapiunofficial.tech/api/v2.1/films/';
 
 getMovies(API_url_popular);
 
@@ -79,21 +80,33 @@ form.addEventListener('submit', (e)=> {
 const modalEl = document.querySelector('.modal');
 
 async function openModal(id){
-  console.log(id)
+
+  const response = await fetch(API_Movie_details + id, {
+    headers: {
+      'Content-Type': 'application.json',
+      'X-API-KEY': API_Key,
+    }
+  });
+  const respdata = await response.json();
+  console.log(respdata);
+
+  console.log(id);
   modalEl.classList.add('modal--show');
+  document.body.classList.add('stop-scrolling');
 
   modalEl.innerHTML = `
     <div class="modal__card">
-      <img class="modal__movie-backdrop" src="" alt="">
+      <img class="modal__movie-backdrop" src="${respdata.data.posterUrl}" alt="">
       <h2>
-        <span class="modal__movie-title">Название</span>
-        <span class="modal__movie-release-year">Год</span>
+        <span class="modal__movie-title">Название ${respdata.data.nameRu}</span>
+        <span class="modal__movie-release-year">Год ${respdata.data.year}</span>
       </h2>
       <ul class="modal__movie-info">
         <div class="loader"></div>
-        <li class="modal__movie-genre">Жанр</li>
-        <li class="modal__movie-runtime">Время -минут</li>
-        <li class="modal__movie-overview">Описание</li>
+        ${respdata.data.filmLength ? `<li class="modal__movie-runtime">Время ${respdata.data.filmLength}-минут</li>` : ``}
+        <li >Сайт: <a class="modal__movie-site" href="${respdata.data.webUrl}">${respdata.data.webUrl}</a></li>
+        <li class="modal__movie-genre">Жанр - ${respdata.data.genres.map((el) => `<span>${el.genre}</span>`)}</li> 
+        <li class="modal__movie-overview">Описание - ${respdata.data.description}</li>
       </ul>
       <button type="button" class="modal__button-close">Закрыть</button>
     </div>
@@ -105,6 +118,7 @@ async function openModal(id){
 
 function closeModal() {
   modalEl.classList.remove('modal--show');
+  document.body.classList.remove('stop-scrolling');
   console.log('elfkztn');
 }
 
@@ -119,3 +133,6 @@ window.addEventListener('keydown', (e)=>{
     closeModal();
   }
 });
+
+
+{/* <li class="modal__movie-genre">Жанр - ${respdata.data.genres.map((el) => `<span>${el.genre}</span>`)}</li> */}
